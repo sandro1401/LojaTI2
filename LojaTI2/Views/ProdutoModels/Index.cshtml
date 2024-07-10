@@ -1,0 +1,50 @@
+﻿@model IEnumerable<LojaTI2.Models.ProdutoModel>
+
+@{
+    ViewBag.Subtitulo = "Listagem de Produtos";
+}
+
+<header class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="text-primary">@ViewBag.Subtitulo</h1>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Novo Produto</a>
+    </div>
+</header>
+
+
+
+@if (Model.Count() > 0)
+{
+    <table class="table table-striped tabela-produtos">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Estoque</th>
+                <th>Preço</th>
+                <th>Categoria</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var produto in Model)
+            {
+                <tr>
+                    <td>@produto.Nome</td>
+                    <td>@produto.Estoque.ToString("D4")</td>
+                    <td>@produto.Preco.ToString("C")</td>
+                    <td>@produto.Categoria.Nome</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@produto.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@produto.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@produto.Id">Delete</a>
+                        
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Não há nenhum produto cadastrado.</p>
+}
