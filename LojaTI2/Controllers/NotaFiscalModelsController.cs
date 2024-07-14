@@ -12,9 +12,9 @@ namespace LojaTI2.Controllers
 {
     public class NotaFiscalModelsController : Controller
     {
-        private readonly LojaTI2Context _context;
+        private readonly LojaContext _context;
 
-        public NotaFiscalModelsController(LojaTI2Context context)
+        public NotaFiscalModelsController(LojaContext context)
         {
             _context = context;
         }
@@ -22,8 +22,8 @@ namespace LojaTI2.Controllers
         // GET: NotaFiscalModels
         public async Task<IActionResult> Index()
         {
-            var lojaTI2Context = _context.NotaFiscalModel.Include(n => n.Cliente);
-            return View(await lojaTI2Context.ToListAsync());
+            var lojaContext = _context.Notas.Include(n => n.Cliente);
+            return View(await lojaContext.ToListAsync());
         }
 
         // GET: NotaFiscalModels/Details/5
@@ -34,7 +34,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var notaFiscalModel = await _context.NotaFiscalModel
+            var notaFiscalModel = await _context.Notas
                 .Include(n => n.Cliente)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (notaFiscalModel == null)
@@ -48,7 +48,7 @@ namespace LojaTI2.Controllers
         // GET: NotaFiscalModels/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.ClienteModel, "Id", "CPF");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace LojaTI2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.ClienteModel, "Id", "CPF", notaFiscalModel.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF", notaFiscalModel.ClienteId);
             return View(notaFiscalModel);
         }
 
@@ -77,12 +77,12 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var notaFiscalModel = await _context.NotaFiscalModel.FindAsync(id);
+            var notaFiscalModel = await _context.Notas.FindAsync(id);
             if (notaFiscalModel == null)
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.ClienteModel, "Id", "CPF", notaFiscalModel.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF", notaFiscalModel.ClienteId);
             return View(notaFiscalModel);
         }
 
@@ -118,7 +118,7 @@ namespace LojaTI2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.ClienteModel, "Id", "CPF", notaFiscalModel.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF", notaFiscalModel.ClienteId);
             return View(notaFiscalModel);
         }
 
@@ -130,7 +130,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var notaFiscalModel = await _context.NotaFiscalModel
+            var notaFiscalModel = await _context.Notas
                 .Include(n => n.Cliente)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (notaFiscalModel == null)
@@ -146,10 +146,10 @@ namespace LojaTI2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var notaFiscalModel = await _context.NotaFiscalModel.FindAsync(id);
+            var notaFiscalModel = await _context.Notas.FindAsync(id);
             if (notaFiscalModel != null)
             {
-                _context.NotaFiscalModel.Remove(notaFiscalModel);
+                _context.Notas.Remove(notaFiscalModel);
             }
 
             await _context.SaveChangesAsync();
@@ -158,7 +158,7 @@ namespace LojaTI2.Controllers
 
         private bool NotaFiscalModelExists(int id)
         {
-            return _context.NotaFiscalModel.Any(e => e.Id == id);
+            return _context.Notas.Any(e => e.Id == id);
         }
     }
 }

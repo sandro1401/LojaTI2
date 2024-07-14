@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace LojaTI2.Migrations
+namespace LojaTI2.Migrations.Loja
 {
     /// <inheritdoc />
     public partial class V1 : Migration

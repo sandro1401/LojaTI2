@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace LojaTI2.Models
 {
+    [Table("Produto")]
     public class ProdutoModel
     {
         
@@ -18,7 +20,7 @@ namespace LojaTI2.Models
        
         [Display(Name ="Categoria")]
         public int CategoriaId { get; set; }
-
+     
         public CategoriaModel Categoria { get; set; }
       
     }

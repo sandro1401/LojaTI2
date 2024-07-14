@@ -12,19 +12,45 @@ namespace LojaTI2.Controllers
 {
     public class PedidoModelsController : Controller
     {
-        private readonly LojaTI2Context _context;
+        private readonly LojaContext _context;
 
-        public PedidoModelsController(LojaTI2Context context)
+        public PedidoModelsController(LojaContext context)
         {
             _context = context;
         }
 
         // GET: PedidoModels
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            var lojaTI2Context = _context.PedidoModel.Include(p => p.Cliente);
-            return View(await lojaTI2Context.ToListAsync());
+            if(id.HasValue)
+            {
+                var cliente = await _context.Clientes.FindAsync(id);
+                if (cliente == null)
+                {
+                    var pedidosContext = _context.Pedidos
+                        .Where(P => P.ClienteId == id).OrderByDescending(p => p.Id).AsNoTracking();
+                    
+                    ViewBag.Cliente = cliente;
+                    return View(pedidosContext);
+                }
+                else
+                {
+                    TempData["mensagem"] = MensagemModel.Serializar("Cliente não encontrado",
+                        TipoMensagem.Erro);
+                    return RedirectToAction("Index", "Cliente");
+                }
+
+            }
+            else
+            {
+                TempData["mensagem"] = MensagemModel.Serializar("Cliente não informado",
+                    TipoMensagem.Erro);
+                return RedirectToAction("Index", "Cliente");
+            }
+            
+
         }
+          
 
         // GET: PedidoModels/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -34,7 +60,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var pedidoModel = await _context.PedidoModel
+            var pedidoModel = await _context.Pedidos
                 .Include(p => p.Cliente)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (pedidoModel == null)
@@ -48,7 +74,7 @@ namespace LojaTI2.Controllers
         // GET: PedidoModels/Create
         public IActionResult Create()
         {
-            ViewData["IdCliente"] = new SelectList(_context.ClienteModel, "Id", "CPF");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF");
             return View();
         }
 
@@ -65,7 +91,7 @@ namespace LojaTI2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdCliente"] = new SelectList(_context.ClienteModel, "Id", "CPF", pedidoModel.IdCliente);
+            ViewData["IdCliente"] = new SelectList(_context.Clientes, "Id", "CPF", pedidoModel.ClienteId);
             return View(pedidoModel);
         }
 
@@ -77,12 +103,12 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var pedidoModel = await _context.PedidoModel.FindAsync(id);
+            var pedidoModel = await _context.Pedidos.FindAsync(id);
             if (pedidoModel == null)
             {
                 return NotFound();
             }
-            ViewData["IdCliente"] = new SelectList(_context.ClienteModel, "Id", "CPF", pedidoModel.IdCliente);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF", pedidoModel.ClienteId);
             return View(pedidoModel);
         }
 
@@ -118,7 +144,7 @@ namespace LojaTI2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdCliente"] = new SelectList(_context.ClienteModel, "Id", "CPF", pedidoModel.IdCliente);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "CPF", pedidoModel.ClienteId);
             return View(pedidoModel);
         }
 
@@ -130,7 +156,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var pedidoModel = await _context.PedidoModel
+            var pedidoModel = await _context.Pedidos
                 .Include(p => p.Cliente)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (pedidoModel == null)
@@ -146,10 +172,10 @@ namespace LojaTI2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pedidoModel = await _context.PedidoModel.FindAsync(id);
+            var pedidoModel = await _context.Pedidos.FindAsync(id);
             if (pedidoModel != null)
             {
-                _context.PedidoModel.Remove(pedidoModel);
+                _context.Pedidos.Remove(pedidoModel);
             }
 
             await _context.SaveChangesAsync();
@@ -158,7 +184,7 @@ namespace LojaTI2.Controllers
 
         private bool PedidoModelExists(int id)
         {
-            return _context.PedidoModel.Any(e => e.Id == id);
+            return _context.Pedidos.Any(e => e.Id == id);
         }
     }
 }

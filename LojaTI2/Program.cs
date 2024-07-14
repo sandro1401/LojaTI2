@@ -2,21 +2,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LojaTI2.Areas.Identity.Data;
 using LojaTI2.Data;
-var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("LojaTI2ContextConnection") ?? throw new InvalidOperationException("Connection string 'LojaTI2ContextConnection' not found.");
+using LojaTI2.Models;
 
-builder.Services.AddDbContext<LojaTI2Context>(options => options.UseSqlServer(connectionString));
+var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("LojaContextConnection") ?? throw new InvalidOperationException("Connection string 'LojaContextConnection' not found.");
+
+// Registrar o DbContext principal da aplicação
+builder.Services.AddDbContext<LojaContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Registrar o DbContext para a Identidade
+builder.Services.AddDbContext<LojaTI2Context>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<LojaTI2User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<LojaTI2Context>();
 
-// Add services to the container.
+// Adicionar serviços ao contêiner
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar o pipeline de solicitação HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -31,6 +39,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -40,6 +49,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
 static async Task CreateRolesAndAdminUser(UserManager<LojaTI2User> userManager, RoleManager<IdentityRole> roleManager)
 {
     // Cria o role Admin se não existir

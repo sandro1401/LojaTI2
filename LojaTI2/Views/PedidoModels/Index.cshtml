@@ -1,53 +1,70 @@
 ﻿@model IEnumerable<LojaTI2.Models.PedidoModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewBag.Subtitulo = "Pedidos";
 }
+
+<header class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="text-primary">@ViewBag.Subtitulo</h1>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Novo Pedido</a>
+    </div>
+</header>
 
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DataPedido)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataEntrega)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorTotal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cliente)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataPedido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataEntrega)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cliente.CPF)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (Model.Count() > 0)
+{
+    <table class="table table-striped tabela-pedidos">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Data/Hora Pedido</th>
+                <th>Valor Total</th>
+                <th>Data/Hora Entrega</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pedido in Model)
+            {
+                <tr>
+                    <td>@pedido.Id.ToString("D4")</td>
+                    <td>@(pedido.DataPedido.HasValue ? pedido.DataPedido : "Em Aberto")</td>
+                    <td>@pedido.ValorTotal.Value.ToString("C")</td>
+                    <td>@(pedido.DataEntrega.HasValue ? pedido.DataEntrega : "Não Entregue")</td>
+                    <td>
+                        @if (pedido.DataPedido.HasValue)
+                        {
+                            <span class="btn btn-sm btn-light"><i class="bi-check-lg text-gray" title="Pedido já fechado"></i></span>
+                            @if (pedido.DataEntrega.HasValue)
+                            {
+                                <span class="btn btn-sm btn-light"><i class="bi-truck text-gray" title="Pedido já entregue"></i></span>
+                            }
+                            else
+                            {
+                                <a asp-action="Entregar" asp-route-id="@pedido.Id" class="btn btn-sm btn-warning"><i class="bi-truck" title="Registrar entrega do pedido"></i></a>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-action="Fechar" asp-route-id="@pedido.Id" class="btn btn-sm btn-success"><i class="bi-check-lg" title="Fechar pedido"></i></a>
+                            <span class="btn btn-sm btn-light"><i class="bi-truck text-gray" title="Feche o pedido antes de registrar a entrega"></i></span>
+                        }
+                        <a asp-action="Index" asp-controller="ItemPedido" asp-route-ped="@pedido.Id" class="btn btn-sm btn-info"><i class="bi-list-check" title="Itens do pedido"></i></a>
+                        <a asp-action="Excluir" asp-route-id="@pedido.Id" class="btn btn-sm btn-danger"><i class="bi-trash" title="Excluir pedido"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    <p>Não há nenhum pedido cadastrado para este cliente.</p>
+}

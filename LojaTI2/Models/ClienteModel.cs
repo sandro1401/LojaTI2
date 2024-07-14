@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,10 +28,14 @@ namespace LojaTI2.Models
         {
             get => (int)Math.Floor((DateTime.Now - DataNascimento).TotalDays / 365.2425);
         }
+       
 
-        public List<EnderecoModel> Enderecos { get; set; }
+        public ICollection<EnderecoModel> Enderecos { get; set; } = new List<EnderecoModel>();
 
-        public List<PedidoModel> Pedidos { get; set; }
+        public ICollection<PedidoModel> Pedidos { get; set; }
+
+
+
     }
 }
 

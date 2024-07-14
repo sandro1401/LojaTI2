@@ -35,8 +35,8 @@
                     <td>@cliente.DataNascimento</td>
                     <td>@cliente.Email</td>
                     <td>
-                        <a asp-action="Index" asp-controller="Pedido" asp-route-cid="@cliente.Id" class="btn btn-sm btn-info"><i class="bi-cart" title="Pedidos"></i></a>
-                        <a asp-action="Index" asp-controller="Endereco" asp-route-cid="@cliente.Id" class="btn btn-sm btn-success"><i class="bi-mailbox" title="Endereços"></i></a>
+                        <a asp-action="Index" asp-controller="PedidoModels" asp-route-id="@cliente.Id" class="btn btn-sm btn-info"><i class="bi-cart" title="Pedidos"></i></a>
+                        <a asp-action="Index" asp-controller="EnderecoModels" asp-route-id="@cliente.Id" class="btn btn-sm btn-success"><i class="bi-mailbox" title="Endereços"></i></a>
                         <a asp-action="Edit" asp-route-id="@cliente.Id">Edit</a> |
                         <a asp-action="Details" asp-route-id="@cliente.Id">Details</a> |
                         <a asp-action="Delete" asp-route-id="@cliente.Id">Delete</a>

@@ -12,9 +12,9 @@ namespace LojaTI2.Controllers
 {
     public class ClienteModelsController : Controller
     {
-        private readonly LojaTI2Context _context;
+        private readonly LojaContext _context;
 
-        public ClienteModelsController(LojaTI2Context context)
+        public ClienteModelsController(LojaContext context)
         {
             _context = context;
         }
@@ -22,7 +22,7 @@ namespace LojaTI2.Controllers
         // GET: ClienteModels
         public  IActionResult Index()
         {
-            var clientes = _context.ClienteModel.ToList();
+            var clientes = _context.Clientes.ToList();
             return View(clientes);
         }
 
@@ -34,7 +34,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var clienteModel = await _context.ClienteModel
+            var clienteModel = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (clienteModel == null)
             {
@@ -71,7 +71,7 @@ namespace LojaTI2.Controllers
         // GET: ClienteModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            ClienteModel clienteContext = _context.ClienteModel.FirstOrDefault(x => x.Id == id);
+            ClienteModel clienteContext = _context.Clientes.FirstOrDefault(x => x.Id == id);
             if (clienteContext == null) {
 
                 return NotFound();
@@ -114,7 +114,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var clienteModel = await _context.ClienteModel
+            var clienteModel = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (clienteModel == null)
             {
@@ -129,10 +129,10 @@ namespace LojaTI2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var clienteModel = await _context.ClienteModel.FindAsync(id);
+            var clienteModel = await _context.Clientes.FindAsync(id);
             if (clienteModel != null)
             {
-                _context.ClienteModel.Remove(clienteModel);
+                _context.Clientes.Remove(clienteModel);
             }
 
             await _context.SaveChangesAsync();
@@ -141,7 +141,7 @@ namespace LojaTI2.Controllers
 
         private bool ClienteModelExists(int id)
         {
-            return _context.ClienteModel.Any(e => e.Id == id);
-        }
+            return _context.Clientes.Any(e => e.Id == id);
+        }   
     }
 }

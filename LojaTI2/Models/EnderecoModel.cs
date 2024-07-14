@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LojaTI2.Models
 {
-    [Owned, Table("Endereco")]
+    [Table("Endereco")]
     public class EnderecoModel
     {
         public int Id { get; set; }
@@ -32,6 +32,9 @@ namespace LojaTI2.Models
         public string Referencia { get; set; }
 
         public bool Selecionado { get; set; }
+
+        public int ClienteModelId { get; set; }
+        public ClienteModel Cliente { get; set; }
 
         [NotMapped]
         public string EnderecoCompleto

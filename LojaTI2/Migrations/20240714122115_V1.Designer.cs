@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LojaTI2.Migrations
 {
     [DbContext(typeof(LojaTI2Context))]
-    [Migration("20240710183904_V1")]
+    [Migration("20240714122115_V1")]
     partial class V1
     {
         /// <inheritdoc />
@@ -167,7 +167,7 @@ namespace LojaTI2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ClienteModelId")
+                    b.Property<int>("ClienteModelId")
                         .HasColumnType("int");
 
                     b.Property<string>("Complemento")
@@ -217,6 +217,12 @@ namespace LojaTI2.Migrations
                     b.Property<int?>("NotaFiscalModelId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PedidoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantidade")
                         .HasColumnType("int");
 
@@ -225,11 +231,11 @@ namespace LojaTI2.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdPedido");
-
-                    b.HasIndex("IdProduto");
-
                     b.HasIndex("NotaFiscalModelId");
+
+                    b.HasIndex("PedidoId");
+
+                    b.HasIndex("ProdutoId");
 
                     b.ToTable("ItemPedido");
                 });
@@ -280,26 +286,36 @@ namespace LojaTI2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DataEntrega")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DataPedido")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EnderecoEntregaId")
-                        .HasColumnType("int");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<int>("IdCliente")
-                        .HasColumnType("int");
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Senha")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<double?>("ValorTotal")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnderecoEntregaId");
-
-                    b.HasIndex("IdCliente");
+                    b.HasIndex("ClienteId");
 
                     b.ToTable("Pedido");
                 });
@@ -472,28 +488,32 @@ namespace LojaTI2.Migrations
 
             modelBuilder.Entity("LojaTI2.Models.EnderecoModel", b =>
                 {
-                    b.HasOne("LojaTI2.Models.ClienteModel", null)
+                    b.HasOne("LojaTI2.Models.ClienteModel", "Cliente")
                         .WithMany("Enderecos")
-                        .HasForeignKey("ClienteModelId");
+                        .HasForeignKey("ClienteModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
                 });
 
             modelBuilder.Entity("LojaTI2.Models.ItemPedidoModel", b =>
                 {
+                    b.HasOne("LojaTI2.Models.NotaFiscalModel", null)
+                        .WithMany("Itens")
+                        .HasForeignKey("NotaFiscalModelId");
+
                     b.HasOne("LojaTI2.Models.PedidoModel", "Pedido")
                         .WithMany("ItensPedido")
-                        .HasForeignKey("IdPedido")
+                        .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LojaTI2.Models.ProdutoModel", "Produto")
                         .WithMany()
-                        .HasForeignKey("IdProduto")
+                        .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("LojaTI2.Models.NotaFiscalModel", null)
-                        .WithMany("Itens")
-                        .HasForeignKey("NotaFiscalModelId");
 
                     b.Navigation("Pedido");
 
@@ -513,21 +533,13 @@ namespace LojaTI2.Migrations
 
             modelBuilder.Entity("LojaTI2.Models.PedidoModel", b =>
                 {
-                    b.HasOne("LojaTI2.Models.EnderecoModel", "EnderecoEntrega")
-                        .WithMany()
-                        .HasForeignKey("EnderecoEntregaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("LojaTI2.Models.ClienteModel", "Cliente")
                         .WithMany("Pedidos")
-                        .HasForeignKey("IdCliente")
+                        .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Cliente");
-
-                    b.Navigation("EnderecoEntrega");
                 });
 
             modelBuilder.Entity("LojaTI2.Models.ProdutoModel", b =>

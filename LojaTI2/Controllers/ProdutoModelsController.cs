@@ -12,9 +12,9 @@ namespace LojaTI2.Controllers
 {
     public class ProdutoModelsController : Controller
     {
-        private readonly LojaTI2Context _context;
+        private readonly LojaContext _context;
 
-        public ProdutoModelsController(LojaTI2Context context)
+        public ProdutoModelsController(LojaContext context)
         {
             _context = context;
         }
@@ -22,8 +22,8 @@ namespace LojaTI2.Controllers
         // GET: ProdutoModels
         public async Task<IActionResult> Index()
         {
-            var listaProdutos = _context.ProdutoModel.Include("Categoria");
-            return View(await listaProdutos.ToListAsync());
+            var listaProdutos = _context.Produtos.Include("Categoria").ToListAsync();
+            return View(await listaProdutos);
         }
 
         // GET: ProdutoModels/Details/5
@@ -34,7 +34,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var produtoModel = await _context.ProdutoModel.Include(c => c.Categoria)
+            var produtoModel = await _context.Produtos.Include(c => c.Categoria)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (produtoModel == null)
             {
@@ -48,7 +48,7 @@ namespace LojaTI2.Controllers
         public IActionResult Create()
 
         {
-            ViewData["CategoriaId"] = new SelectList(_context.CategoriaModel, "Id", "Nome");
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nome");
             return View();
         }
 
@@ -67,12 +67,12 @@ namespace LojaTI2.Controllers
         // GET: ProdutoModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-         ProdutoModel produtoContext = _context.ProdutoModel.FirstOrDefault(p => p.Id == id);
+         ProdutoModel produtoContext = _context.Produtos.FirstOrDefault(p => p.Id == id);
             if (produtoContext == null)
             {
                 return NotFound();
             }
-            ViewData["CategoriaId"] = new SelectList(_context.CategoriaModel, "Id", "Nome", produtoContext.CategoriaId);
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nome", produtoContext.CategoriaId);
             return View(produtoContext);
         }
 
@@ -101,12 +101,12 @@ namespace LojaTI2.Controllers
         // GET: ProdutoModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.ProdutoModel == null)
+            if (id == null || _context.Produtos == null)
             {
                 return NotFound();
             }
 
-            var produtoModel = await _context.ProdutoModel
+            var produtoModel = await _context.Produtos
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (produtoModel == null)
             {
@@ -121,10 +121,10 @@ namespace LojaTI2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var produtoModel = await _context.ProdutoModel.FindAsync(id);
+            var produtoModel = await _context.Produtos.FindAsync(id);
             if (produtoModel != null)
             {
-                _context.ProdutoModel.Remove(produtoModel);
+                _context.Produtos.Remove(produtoModel);
             }
 
             await _context.SaveChangesAsync();
@@ -133,7 +133,7 @@ namespace LojaTI2.Controllers
 
         private bool ProdutoModelExists(int id)
         {
-            return _context.ProdutoModel.Any(e => e.Id == id);
+            return _context.Produtos.Any(e => e.Id == id);
         }
     }
 }

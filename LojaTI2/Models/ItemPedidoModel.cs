@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace LojaTI2.Models
 {
     [Table("ItemPedido")]
@@ -15,11 +16,13 @@ namespace LojaTI2.Models
 
         public double ValorUnitario { get; set; }
 
-        [ForeignKey("IdPedido")]
+        [ForeignKey("PedidoId")]
         public PedidoModel Pedido { get; set; }
 
-        [ForeignKey("IdProduto")]
+        [ForeignKey("ProdutoId")]
         public ProdutoModel Produto { get; set; }
+
+      
 
         [NotMapped]
         public double ValorItem { get => this.Quantidade * this.ValorUnitario; }

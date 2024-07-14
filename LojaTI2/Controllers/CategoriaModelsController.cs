@@ -12,9 +12,9 @@ namespace LojaTI2.Controllers
 {
     public class CategoriaModelsController : Controller
     {
-        private readonly LojaTI2Context _context;
+        private readonly LojaContext _context;
 
-        public CategoriaModelsController(LojaTI2Context context)
+        public CategoriaModelsController(LojaContext context)
         {
             _context = context;
         }
@@ -22,7 +22,7 @@ namespace LojaTI2.Controllers
         // GET: CategoriaModels
         public IActionResult Index()
         {
-           var categorias = _context.CategoriaModel.ToList();
+           var categorias = _context.Categorias.ToList();
             return View(categorias);
         }
 
@@ -34,7 +34,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var categoriaModel = await _context.CategoriaModel
+            var categoriaModel = await _context.Categorias
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (categoriaModel == null)
             {
@@ -70,7 +70,7 @@ namespace LojaTI2.Controllers
         // GET: CategoriaModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            CategoriaModel categoriaContext = _context.CategoriaModel.FirstOrDefault(x  => x.Id == id);
+            CategoriaModel categoriaContext = _context.Categorias.FirstOrDefault(x  => x.Id == id);
             if ( categoriaContext == null)
             {
                 return NotFound();
@@ -106,8 +106,7 @@ namespace LojaTI2.Controllers
                 return NotFound();
             }
 
-            var categoriaModel = await _context.CategoriaModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var categoriaModel = await _context.Categorias.FirstOrDefaultAsync(m => m.Id == id);
             if (categoriaModel == null)
             {
                 return NotFound();
@@ -121,10 +120,10 @@ namespace LojaTI2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var categoriaModel = await _context.CategoriaModel.FindAsync(id);
+            var categoriaModel = await _context.Categorias.FindAsync(id);
             if (categoriaModel != null)
             {
-                _context.CategoriaModel.Remove(categoriaModel);
+                _context.Categorias.Remove(categoriaModel);
             }
 
             await _context.SaveChangesAsync();
@@ -133,7 +132,7 @@ namespace LojaTI2.Controllers
 
         private bool CategoriaModelExists(int id)
         {
-            return _context.CategoriaModel.Any(e => e.Id == id);
+            return _context.Categorias.Any(e => e.Id == id);
         }
     }
 }
